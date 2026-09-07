@@ -1,0 +1,21 @@
+# .NET
+bin/
+obj/
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets
+appsettings.*.json
+!appsettings.json
+
+# TMDB dataset
+data/tmdb/
+
+# Semantic search generated index
+src/SearchService/movie-embeddings.json
+
+# VS Code
+.vscode/

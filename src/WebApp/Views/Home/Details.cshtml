@@ -1,0 +1,61 @@
+@model WebApp.Models.Movie
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="movie-detail">
+
+    <div class="detail-poster">
+        🎬
+    </div>
+
+    <div class="detail-content">
+
+        <h1>@Model.Title</h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Tagline))
+        {
+            <p class="tagline">"@Model.Tagline"</p>
+        }
+
+        <div class="detail-rating">
+            ⭐ @Model.VoteAverage.ToString("0.0")
+            <span>· @Model.VoteCount votes</span>
+        </div>
+
+        <p class="genres">@Model.Genres</p>
+
+        <p class="overview">
+            @Model.Overview
+        </p>
+
+        <div class="movie-meta">
+            <div>
+                <strong>Release Date</strong>
+                <span>@Model.ReleaseDate?.ToString("MMMM d, yyyy")</span>
+            </div>
+
+            <div>
+                <strong>Runtime</strong>
+                <span>@(Model.Runtime.HasValue ? $"{Model.Runtime} minutes" : "Unknown")</span>
+            </div>
+
+            <div>
+                <strong>Original Language</strong>
+                <span>@Model.OriginalLanguage.ToUpper()</span>
+            </div>
+
+            <div>
+                <strong>Status</strong>
+                <span>@Model.Status</span>
+            </div>
+        </div>
+
+        <a class="back-button" asp-controller="Home" asp-action="Index">
+            ← Back to movies
+        </a>
+
+    </div>
+
+</div>

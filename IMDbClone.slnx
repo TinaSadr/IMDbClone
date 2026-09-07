@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MovieService/MovieService.csproj" />
+    <Project Path="src/SearchService/SearchService.csproj" />
+    <Project Path="src/WebApp/WebApp.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/MovieImporter/MovieImporter.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,40 @@
+﻿@model List<WebApp.Models.Movie>
+
+@{
+    ViewData["Title"] = "IMDbClone";
+}
+
+<div class="hero">
+    <h1>Discover your next movie</h1>
+    <p>Explore thousands of movies and find something worth watching.</p>
+
+    <div class="search-box">
+        <input type="text" placeholder="Search movies..." />
+        <button>Search</button>
+    </div>
+</div>
+
+<h2 class="section-title">Popular Movies</h2>
+
+<div class="movie-grid">
+    @foreach (var movie in (Model ?? new List<WebApp.Models.Movie>()).Take(20))
+    {
+        <a class="movie-card" asp-controller="Home" asp-action="Details" asp-route-id="@movie.Id">
+            <div class="poster-placeholder">
+                🎬
+            </div>
+
+            <div class="movie-info">
+                <h3>@movie.Title</h3>
+
+                <div class="rating">
+                    ⭐ @movie.VoteAverage.ToString("0.0")
+                </div>
+
+                <p>@movie.ReleaseDate?.Year</p>
+
+                <p class="genres">@movie.Genres</p>
+            </div>
+        </a>
+    }
+</div>
