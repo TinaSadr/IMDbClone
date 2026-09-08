@@ -49,6 +49,10 @@ namespace MovieService.Migrations
                     b.Property<double>("Popularity")
                         .HasColumnType("REAL");
 
+                    b.Property<string>("PosterPath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("ReleaseDate")
                         .HasColumnType("TEXT");
 

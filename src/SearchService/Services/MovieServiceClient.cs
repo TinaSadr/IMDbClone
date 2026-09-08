@@ -12,10 +12,11 @@ public class MovieServiceClient
         _httpClient = httpClient;
     }
 
-    public async Task<List<Movie>> GetMoviesAsync()
+    public async Task<List<Movie>> GetMoviesAsync(CancellationToken ct = default)
     {
         return await _httpClient.GetFromJsonAsync<List<Movie>>(
-            "/movies"
+            "/movies",
+            ct
         ) ?? new List<Movie>();
     }
 }

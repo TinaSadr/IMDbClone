@@ -19,10 +19,24 @@
 <div class="movie-grid">
     @foreach (var movie in (Model ?? new List<WebApp.Models.Movie>()).Take(20))
     {
-        <a class="movie-card" asp-controller="Home" asp-action="Details" asp-route-id="@movie.Id">
-            <div class="poster-placeholder">
-                🎬
-            </div>
+        <a class="movie-card"
+           asp-controller="Home"
+           asp-action="Details"
+           asp-route-id="@movie.Id">
+
+            @if (!string.IsNullOrWhiteSpace(movie.PosterPath))
+            {
+                <img
+                    class="movie-poster"
+                    src="https://image.tmdb.org/t/p/w500@(movie.PosterPath)"
+                    alt="@movie.Title poster" />
+            }
+            else
+            {
+                <div class="poster-placeholder">
+                    🎬
+                </div>
+            }
 
             <div class="movie-info">
                 <h3>@movie.Title</h3>

@@ -4,57 +4,77 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="movie-detail">
+<div class="movie-details">
 
-    <div class="detail-poster">
-        🎬
+    <div class="details-poster">
+        @if (!string.IsNullOrWhiteSpace(Model.PosterPath))
+        {
+            <img
+                src="https://image.tmdb.org/t/p/w500@(Model.PosterPath)"
+                alt="@Model.Title poster" />
+        }
+        else
+        {
+            <div class="poster-placeholder">
+                🎬
+            </div>
+        }
     </div>
 
-    <div class="detail-content">
+    <div class="details-content">
 
         <h1>@Model.Title</h1>
 
         @if (!string.IsNullOrWhiteSpace(Model.Tagline))
         {
-            <p class="tagline">"@Model.Tagline"</p>
+            <p class="tagline">@Model.Tagline</p>
         }
 
-        <div class="detail-rating">
+        <div class="rating">
             ⭐ @Model.VoteAverage.ToString("0.0")
-            <span>· @Model.VoteCount votes</span>
+            <span>(@Model.VoteCount votes)</span>
         </div>
 
-        <p class="genres">@Model.Genres</p>
+        <div class="movie-meta">
+            @if (Model.ReleaseDate.HasValue)
+            {
+                <span>@Model.ReleaseDate.Value.Year</span>
+            }
+
+            @if (Model.Runtime.HasValue)
+            {
+                <span>@Model.Runtime min</span>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.OriginalLanguage))
+            {
+                <span>@Model.OriginalLanguage.ToUpper()</span>
+            }
+        </div>
+
+        <h2>Overview</h2>
 
         <p class="overview">
             @Model.Overview
         </p>
 
-        <div class="movie-meta">
-            <div>
-                <strong>Release Date</strong>
-                <span>@Model.ReleaseDate?.ToString("MMMM d, yyyy")</span>
-            </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Genres))
+        {
+            <h2>Genres</h2>
 
-            <div>
-                <strong>Runtime</strong>
-                <span>@(Model.Runtime.HasValue ? $"{Model.Runtime} minutes" : "Unknown")</span>
-            </div>
+            <p class="genres">
+                @Model.Genres
+            </p>
+        }
 
-            <div>
-                <strong>Original Language</strong>
-                <span>@Model.OriginalLanguage.ToUpper()</span>
-            </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Keywords))
+        {
+            <h2>Keywords</h2>
 
-            <div>
-                <strong>Status</strong>
-                <span>@Model.Status</span>
-            </div>
-        </div>
-
-        <a class="back-button" asp-controller="Home" asp-action="Index">
-            ← Back to movies
-        </a>
+            <p class="genres">
+                @Model.Keywords
+            </p>
+        }
 
     </div>
 

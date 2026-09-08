@@ -1,3 +1,4 @@
+
 using SearchService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,9 +10,8 @@ builder.Services.AddSingleton<SemanticSearchService>();
 
 builder.Services.AddHttpClient<MovieServiceClient>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5132");
+    client.BaseAddress = new Uri(builder.Configuration["MovieService:BaseUrl"] ?? throw new InvalidOperationException("MovieService base URL is missing."));
 });
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -29,7 +29,8 @@ app.MapGet("/", () =>
 app.MapGet("/search", async (
     string q,
     SemanticSearchService searchService,
-    MovieServiceClient movieService) =>
+    MovieServiceClient movieService,
+    CancellationToken ct) => 
 {
     if (string.IsNullOrWhiteSpace(q))
     {
@@ -39,9 +40,9 @@ app.MapGet("/search", async (
         });
     }
 
-    var results = await searchService.SearchAsync(q);
+    var results = await searchService.SearchAsync(q, ct);
 
-    var movies = await movieService.GetMoviesAsync();
+    var movies = await movieService.GetMoviesAsync(ct);
 
     var response = results
         .Join(
@@ -64,9 +65,10 @@ app.MapGet("/search", async (
 // Create movie embedding index
 app.MapPost("/index", async (
     MovieServiceClient movieService,
-    EmbeddingService embeddingService) =>
+    EmbeddingService embeddingService,
+    CancellationToken ct) =>
 {
-    var movies = await movieService.GetMoviesAsync();
+    var movies = await movieService.GetMoviesAsync(ct);
 
     if (movies.Count == 0)
     {
@@ -80,6 +82,9 @@ app.MapPost("/index", async (
 
     for (int i = 0; i < movies.Count; i++)
     {
+        // This stops the loop immediately if you cancel the process or stop debugging
+        ct.ThrowIfCancellationRequested();
+
         var movie = movies[i];
 
         var text = $"""
@@ -96,7 +101,7 @@ app.MapPost("/index", async (
         );
 
         var embedding =
-            await embeddingService.GenerateEmbeddingAsync(text);
+            await embeddingService.GenerateEmbeddingAsync(text, ct);
 
         embeddings.Add(
             new SearchService.Models.MovieEmbedding
@@ -114,7 +119,8 @@ app.MapPost("/index", async (
 
     var json = System.Text.Json.JsonSerializer.Serialize(embeddings);
 
-    await File.WriteAllTextAsync(path, json);
+    // Pass the token to the file writer
+    await File.WriteAllTextAsync(path, json, ct);
 
     return Results.Ok(new
     {

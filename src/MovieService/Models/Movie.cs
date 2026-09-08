@@ -35,4 +35,6 @@ public class Movie
     public long Revenue { get; set; }
 
     public string Status { get; set; } = string.Empty;
+
+public string PosterPath { get; set; } = string.Empty;
 }

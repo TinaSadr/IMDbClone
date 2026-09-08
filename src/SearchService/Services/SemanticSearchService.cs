@@ -20,14 +20,14 @@ public class SemanticSearchService
         );
     }
 
-    public async Task<List<MovieEmbedding>> LoadEmbeddingsAsync()
+    public async Task<List<MovieEmbedding>> LoadEmbeddingsAsync(CancellationToken ct = default)
     {
         if (!File.Exists(_indexPath))
         {
             return new List<MovieEmbedding>();
         }
 
-        var json = await File.ReadAllTextAsync(_indexPath);
+        var json = await File.ReadAllTextAsync(_indexPath, ct);
 
         return JsonSerializer.Deserialize<List<MovieEmbedding>>(json)
             ?? new List<MovieEmbedding>();
@@ -35,9 +35,10 @@ public class SemanticSearchService
 
     public async Task<List<(int MovieId, double Score)>> SearchAsync(
         string query,
+        CancellationToken ct = default,
         int limit = 10)
     {
-        var movies = await LoadEmbeddingsAsync();
+        var movies = await LoadEmbeddingsAsync(ct);
 
         if (movies.Count == 0)
         {
@@ -45,7 +46,7 @@ public class SemanticSearchService
         }
 
         var queryEmbedding =
-            await _embeddingService.GenerateEmbeddingAsync(query);
+            await _embeddingService.GenerateEmbeddingAsync(query, ct);
 
         var results = movies
             .Select(movie => (
